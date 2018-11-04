@@ -103,23 +103,23 @@ class goldexchange : public eosio::contract {
 		cleos set account permission mk active '{"threshold": 1,"keys": [{"key": "EOS7ijWCBmoXBi3CgtK7DJxentZZeTkeUnaSDvyro9dq7Sd1C3dC4","weight": 1}],
 												"accounts": [{"permission":{"actor":"ck.code","permission":"eosio.code"},"weight":1}]}' owner -p mk
 		*/
-		//cleos -u http://jungle.cryptolions.io:18888 set account permission goldbankgold active '{"threshold": 1,"keys": [{"key": "EOS5UJkjUvJZnuU4zrtdpMhGfxpW2Kk3CK9NGgLi2kvHmbcnpSEVj","weight": 1}],"accounts": [{"permission":{"actor":"goldbankgold","permission":"eosio.code"},"weight":1}]}' owner -p goldbankgold
+		//cleos -u http://jungle.cryptolions.io:18888 set account permission goldexchange active '{"threshold": 1,"keys": [{"key": "EOS5UJkjUvJZnuU4zrtdpMhGfxpW2Kk3CK9NGgLi2kvHmbcnpSEVj","weight": 1}],"accounts": [{"permission":{"actor":"goldexchange","permission":"eosio.code"},"weight":1}]}' owner -p goldexchange
 		/*
-		cleos -u http://jungle.cryptolions.io:18888 push action eosio.token transfer '["goldmonetary", "goldbankgold", "1.0000 EOS", "Exchange test..."]' -p goldmonetary
+		cleos -u http://jungle.cryptolions.io:18888 push action eosio.token transfer '["goldmonet001", "goldexchange", "1.0000 EOS", "Exchange test..."]' -p goldmonet001
 		executed transaction: 75740d0138f1a013f6499f9547956e8ede594df59289e88790d42cea411c9b51  144 bytes  1944 us
-		#   eosio.token <= eosio.token::transfer        {"from":"goldmonetary","to":"goldbankgold","quantity":"1.0000 EOS","memo":"Exchange test..."}
-		#  goldmonetary <= eosio.token::transfer        {"from":"goldmonetary","to":"goldbankgold","quantity":"1.0000 EOS","memo":"Exchange test..."}
-		#  goldbankgold <= eosio.token::transfer        {"from":"goldmonetary","to":"goldbankgold","quantity":"1.0000 EOS","memo":"Exchange test..."}
-		>> gold.token-transfer function called-recieved EOS-amount = 10000 from = goldmonetary To = goldbankgold
-		#  kakaofriends <= kakaofriends::transfer       {"from":"goldbankgold","to":"goldmonetary","quantity":"1.0000 KAKAO","memo":"exchange EOS to GOLD to...
-		#  goldbankgold <= kakaofriends::transfer       {"from":"goldbankgold","to":"goldmonetary","quantity":"1.0000 KAKAO","memo":"exchange EOS to GOLD to...
-		#  goldmonetary <= kakaofriends::transfer       {"from":"goldbankgold","to":"goldmonetary","quantity":"1.0000 KAKAO","memo":"exchange EOS to GOLD to...
+		#   eosio.token <= eosio.token::transfer        {"from":"goldmonet001","to":"goldexchange","quantity":"1.0000 EOS","memo":"Exchange test..."}
+		#  goldmonet001 <= eosio.token::transfer        {"from":"goldmonet001","to":"goldexchange","quantity":"1.0000 EOS","memo":"Exchange test..."}
+		#  goldexchange <= eosio.token::transfer        {"from":"goldmonet001","to":"goldexchange","quantity":"1.0000 EOS","memo":"Exchange test..."}
+		>> gold.token-transfer function called-recieved EOS-amount = 10000 from = goldmonet001 To = goldexchange
+		#  goldtoken000 <= goldtoken000::transfer       {"from":"goldexchange","to":"goldmonet001","quantity":"1.0000 GOLD","memo":"exchange EOS to GOLD to...
+		#  goldexchange <= goldtoken000::transfer       {"from":"goldexchange","to":"goldmonet001","quantity":"1.0000 GOLD","memo":"exchange EOS to GOLD to...
+		#  goldmonet001 <= goldtoken000::transfer       {"from":"goldexchange","to":"goldmonet001","quantity":"1.0000 GOLD","memo":"exchange EOS to GOLD to...
 		warning: transaction executed locally, but may not be confirmed by the network yet
 		*/
 		void airdroptoken(const uint64_t sender, const uint64_t amount)
 		{
 		  const float ratio = 1;
-			const uint64_t token_balance = get_token_balance(N(kakaofriends), symbol_type(S(4, KAKAO)));
+			const uint64_t token_balance = get_token_balance(N(goldtoken000), symbol_type(S(4, GOLD)));
 
 			// no need to require auth....
 			//require_auth(_self); or require_auth2(_self, N(active));
@@ -132,12 +132,12 @@ class goldexchange : public eosio::contract {
 
 			action(
 		           permission_level{_self, N(active)},
-		           N(kakaofriends),
+		           N(goldtoken000),
 		           N(transfer),
 		           std::make_tuple(
 		               _self,
 		               name{sender},
-		               asset(drop_amt, symbol_type(S(4, KAKAO))),
+		               asset(drop_amt, symbol_type(S(4, GOLD))),
 									 // exchange EOS to GOLD token -- 7287555726296854496 -- Enjoy airdrop! Contribution : donate.io
 		               std::string("exchange EOS to GOLD token -- ") + std::to_string(name{sender}) + std::string(" -- Enjoy airdrop! Contribution : donate.io")
 		          )
@@ -185,4 +185,4 @@ EOSIO_ABI_EX(goldexchange, (transfer) (airdroptoken))
 // 1. EOS가 아닌 GOLD Token으로 전송시.... transfer 처리.... 어떻게 ?? token symbol / contract 비교 필요...
 
 // 15. Exchage Test (EOS --> GOLD TOKEN)
-// cleos -u http://jungle.cryptolions.io:18888 push action eosio.token transfer '["goldmonet001", "goldbankgold", "1.0000 EOS", "Exchange test..."]' -p goldmonet001
+// cleos -u http://jungle.cryptolions.io:18888 push action eosio.token transfer '["goldmonet001", "goldexchange", "1.0000 EOS", "Exchange test..."]' -p goldmonet001
