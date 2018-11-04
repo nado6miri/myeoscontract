@@ -70,7 +70,7 @@ const stRoundInfo round_infomation[5] = {
 class goldenbucket : public eosio::contract {
 	private:
 		const uint64_t MINBET = 10000; // 1 EOS
-		const uint64_t MINBET_KAKAO = 10000*100; // 100 KAKAO
+		const uint64_t MINBET_GOLD = 10000*100; // 100 GOLD
 		
 		// taken from eosio.token.hpp
 		struct st_transfer {
@@ -252,8 +252,8 @@ class goldenbucket : public eosio::contract {
 
 
 		// @abi action
-		// cleos -u http://jungle.cryptolions.io:18888 push action eosio.token transfer '["goldmonetary", "goldenbucket", "1.0000 EOS", "Contribution-1-100"]' -p goldmonetary
-		// cleos -u http://jungle.cryptolions.io:18888 push action kakaofriends transfer '["ilovelgtwins", "goldenbucket", "100.0000 KAKAO", "Contribution-1-1000"]' -p ilovelgtwins
+		// cleos -u http://jungle.cryptolions.io:18888 push action eosio.token transfer '["goldmonet001", "goldenbucket", "1.0000 EOS", "Contribution-1-100"]' -p goldmonet001
+		// cleos -u http://jungle.cryptolions.io:18888 push action goldtoken000 transfer '["goldmonet002", "goldenbucket", "100.0000 GOLD", "Contribution-1-1000"]' -p goldmonet002
 		void transfer(uint64_t sender, uint64_t receiver)
 		{
 			uint8_t type = 0;
@@ -295,11 +295,11 @@ class goldenbucket : public eosio::contract {
 					print(" Token = EOS ");
 					eosio_assert(MINBET == donate_amount, "Must donate 1 EOS");
 				}
-				else if(transfer_data.quantity.symbol == symbol_type(S(4, KAKAO)))
+				else if(transfer_data.quantity.symbol == symbol_type(S(4, GOLD)))
 				{
 					type = 1;
-					print(" Token = KAKAO ");
-					eosio_assert(MINBET_KAKAO == donate_amount, "Must donate 100 KAKAO");
+					print(" Token = GOLD ");
+					eosio_assert(MINBET_GOLD == donate_amount, "Must donate 100 GOLD");
 				}
 				else
 				{
@@ -369,8 +369,8 @@ class goldenbucket : public eosio::contract {
 		//cleos -u http://jungle.cryptolions.io:18888 set account permission goldenbucket active '{"threshold": 1,"keys": [{"key": "EOS7gCuRUyNhBzNdDUF7VJWz9iMH7vfkWwokeGwZPLuZJJ9Vwe9Xe","weight": 1}],"accounts": [{"permission":{"actor":"goldenbucket","permission":"eosio.code"},"weight":1}]}' owner -p goldenbucket
 
 		// @abi action
-		// cleos -u http://jungle.cryptolions.io:18888 push action goldenbucket refunddonate '["goldmonetary", "1.0000 EOS"]' -p goldenbucket
-		// cleos -u http://jungle.cryptolions.io:18888 push action goldenbucket refunddonate '["goldmonetary", "100.0000 KAKAO"]' -p goldenbucket
+		// cleos -u http://jungle.cryptolions.io:18888 push action goldenbucket refunddonate '["goldmonet001", "1.0000 EOS"]' -p goldenbucket
+		// cleos -u http://jungle.cryptolions.io:18888 push action goldenbucket refunddonate '["goldmonet001", "100.0000 GOLD"]' -p goldenbucket
 		void refunddonate(account_name receiver, asset quantity)
 		{
 			eosio_assert(is_contract_freezed() == false, "contract is frozen");
@@ -395,20 +395,20 @@ class goldenbucket : public eosio::contract {
 					)
 				).send();
 			}
-			else if(quantity.symbol == symbol_type(S(4, KAKAO)))
+			else if(quantity.symbol == symbol_type(S(4, GOLD)))
 			{
-				print(" Token = KAKAO\n");
-				eosio_assert(MINBET_KAKAO == quantity.amount, "Must 100 KAKAO");
+				print(" Token = GOLD\n");
+				eosio_assert(MINBET_GOLD == quantity.amount, "Must 100 GOLD");
 				require_auth2(N(goldenbucket), N(active));
 				action(
 					permission_level{_self, N(active)},
-					N(kakaofriends),
+					N(goldtoken000),
 					N(transfer),
 					std::make_tuple(
 						_self,
 						receiver,
-						asset(quantity.amount, symbol_type(S(4, KAKAO))),
-						std::string(" To:") + name_to_string(receiver) + std::string("Amount =") + std::to_string(quantity.amount) + std::string(" --REFUND KAKAO.")
+						asset(quantity.amount, symbol_type(S(4, GOLD))),
+						std::string(" To:") + name_to_string(receiver) + std::string("Amount =") + std::to_string(quantity.amount) + std::string(" --REFUND GOLD.")
 					)
 				).send();
 			}
@@ -420,7 +420,7 @@ class goldenbucket : public eosio::contract {
 		}
 
 		// @abi action
-		// cleos -u http://jungle.cryptolions.io:18888 push action goldenbucket closeround '["0", "0", "100.0000 EOS", "100.0000 KAKAO"]' -p goldenbucket
+		// cleos -u http://jungle.cryptolions.io:18888 push action goldenbucket closeround '["0", "0", "100.0000 EOS", "100.0000 GOLD"]' -p goldenbucket
 		void closeround(const uint8_t roundtype, const uint64_t round_index, const asset eosquantity, const asset goldquantity)
 		{
 			uint16_t range[5] = { 10, 500, 1000, 5000, 10000 };
@@ -493,12 +493,12 @@ class goldenbucket : public eosio::contract {
 				{
 					action(
 						permission_level{_self, N(active)},
-						N(kakaofriends),
+						N(goldtoken000),
 						N(transfer),
 						std::make_tuple(
 							_self,
 							N(prizeswallet),
-							asset(prize_gold*10000, symbol_type(S(4, KAKAO))),
+							asset(prize_gold*10000, symbol_type(S(4, GOLD))),
 							std::string("[Congratulation][GOLD] : ") + name_to_string(iter->beneficiery) + std::string("-- You are a Beneficiary! : donation.io")
 						)
 					).send();
@@ -566,7 +566,7 @@ class goldenbucket : public eosio::contract {
 		}
 
 
-		// cleos -u http://jungle.cryptolions.io:18888 push action eosio.token transfer '["iloveyoutube", "goldenbucket", "1.0000 EOS", "Contribution-223-1000"]' -p iloveyoutube
+		// cleos -u http://jungle.cryptolions.io:18888 push action eosio.token transfer '["goldmonet003", "goldenbucket", "1.0000 EOS", "Contribution-223-1000"]' -p goldmonet003
 		uint32_t get_userluckycode(const std::string memo)
 		{
 			std::string header_str, luckynumber_str, postfix_str;
@@ -676,7 +676,7 @@ class goldenbucket : public eosio::contract {
 		}
 		
 		// @abi action
-		// cleos -u http://jungle.cryptolions.io:18888 push action goldenbucket addblacklist '["ilovelgtwins"]' -p goldenbucket
+		// cleos -u http://jungle.cryptolions.io:18888 push action goldenbucket addblacklist '["goldmonet002"]' -p goldenbucket
 		void addblacklist(account_name user)
 		{
 			eosio_assert(is_contract_freezed() == false, "contract is frozen");
@@ -690,7 +690,7 @@ class goldenbucket : public eosio::contract {
 		
 		
 		// @abi action
-		// cleos -u http://jungle.cryptolions.io:18888 push action goldenbucket delblacklist '["ilovelgtwins"]' -p goldenbucket
+		// cleos -u http://jungle.cryptolions.io:18888 push action goldenbucket delblacklist '["goldmonet002"]' -p goldenbucket
 		void delblacklist(account_name user)
 		{
 			eosio_assert(is_contract_freezed() == false, "contract is frozen");
@@ -915,9 +915,9 @@ extern "C" { \
 extern "C" { \
    void apply( uint64_t receiver, uint64_t code, uint64_t action ) { \
       auto self = receiver; \
-      if( code == self || code == N(eosio.token) || code == N(kakaofriends)) { \
+      if( code == self || code == N(eosio.token) || code == N(goldtoken000)) { \
       	 if( action == N(transfer)){ \
-      	 	eosio_assert((code == N(eosio.token) || code == N(kakaofriends)), "Must transfer EOS or KAKAO"); \
+      	 	eosio_assert((code == N(eosio.token) || code == N(goldtoken000)), "Must transfer EOS or GOLD"); \
       	 } \
          TYPE thiscontract( self ); \
          switch( action ) { \
@@ -935,14 +935,14 @@ EOSIO_ABI_EX(goldenbucket, (deltable)(droptable)(transfer)(refunddonate)(closero
 //[TEST Plan]
 /*
 1. contribution
-cleos -u http://jungle.cryptolions.io:18888 push action eosio.token transfer '["iloveyoutube", "goldenbucket", "1.0000 EOS", "Contribution-1-100"]' -p iloveyoutube
-cleos -u http://jungle.cryptolions.io:18888 push action kakaofriends transfer '["goldmonetary", "goldenbucket", "100.0000 KAKAO", "Contribution-8-100"]' -p goldmonetary
+cleos -u http://jungle.cryptolions.io:18888 push action eosio.token transfer '["goldmonet003", "goldenbucket", "1.0000 EOS", "Contribution-1-100"]' -p goldmonet003
+cleos -u http://jungle.cryptolions.io:18888 push action goldtoken000 transfer '["goldmonet001", "goldenbucket", "100.0000 GOLD", "Contribution-8-100"]' -p goldmonet001
 
 2. contribution list check
 cleos -u http://jungle.cryptolions.io:18888 get table -l 100 goldenbucket goldenbucket roundinfos
 
 3. close round
-cleos -u http://jungle.cryptolions.io:18888 push action goldenbucket closeround '["0", "0", "100.0000 EOS", "100.0000 KAKAO"]' -p goldenbucket
+cleos -u http://jungle.cryptolions.io:18888 push action goldenbucket closeround '["0", "0", "100.0000 EOS", "100.0000 GOLD"]' -p goldenbucket
 
 4. winnerlist check
 cleos -u http://jungle.cryptolions.io:18888 get table -l 100 goldenbucket goldenbucket winnerlists
@@ -995,9 +995,9 @@ cleos -u http://jungle.cryptolions.io:18888 get table -l 100 goldenbucket golden
 cleos -u http://jungle.cryptolions.io:18888 get table -l 100 goldenbucket goldenbucket roundinfos
 cleos -u http://jungle.cryptolions.io:18888 push action goldenbucket deltable '["round", "11191290744178809300"]' -p goldenbucket
 
-cleos -u http://jungle.cryptolions.io:18888 push action kakaofriends transfer '["iloveyoutube", "goldenbucket", "100.0000 KAKAO", "Contribution-3-100"]' -p iloveyoutube
+cleos -u http://jungle.cryptolions.io:18888 push action goldtoken000 transfer '["goldmonet003", "goldenbucket", "100.0000 GOLD", "Contribution-3-100"]' -p goldmonet003
 
-cleos -u http://jungle.cryptolions.io:18888 push action goldenbucket closeround '["0", "0", "100.0000 EOS", "100.0000 KAKAO"]' -p goldenbucket
+cleos -u http://jungle.cryptolions.io:18888 push action goldenbucket closeround '["0", "0", "100.0000 EOS", "100.0000 GOLD"]' -p goldenbucket
 cleos -u http://jungle.cryptolions.io:18888 get table -l 100 goldenbucket goldenbucket winnerlists
 
 */
