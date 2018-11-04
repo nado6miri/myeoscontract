@@ -1,0 +1,2 @@
+# myeoscontract
+contract test
